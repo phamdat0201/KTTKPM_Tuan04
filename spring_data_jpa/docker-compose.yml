@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  mysqldb:
+    image: mysql
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+    ports: 
+     - 3307:3306
+    networks:
+     - mt-network
+    environment:
+      MYSQL_DATABASE: CHUYENBAY
+      MYSQL_ROOT_PASSWORD: password #root password
+      MYSQL_ROOT_HOST: '%'
+  springboot-app:
+    build: .
+    image: springboot-app
+    ports:
+     - 8081:8080
+    restart: always
+    networks:
+     - mt-network
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/CHUYENBAY?allowPublicKeyRetrieval=true&useSSL=false",
+        "spring.datasource.username" : "root",
+        "spring.datasource.password" : "password",
+        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL5InnoDBDialect",
+        "spring.jpa.hibernate.ddl-auto" : "update"
+      }'
+    depends_on:
+      - mysqldb
+volumes:
+  db:
+networks:
+ mt-network:
+  driver: bridge

@@ -17,4 +17,5 @@ public class NhanVienController {
     public List<NhanVien> cau3(){
         return nhanvienRepository.findByLuongLessThanEqual(10000);
     }
+    
 }
